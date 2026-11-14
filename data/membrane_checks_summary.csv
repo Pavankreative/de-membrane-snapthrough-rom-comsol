@@ -1,0 +1,8 @@
+check,fe_value,reference,difference,model,note
+In-plane stress magnitude |sigma0 - eps V^2/h^2| 5850-8750 V (13 voltages),33204 Pa at 5850 V,closed form,<=0.11% except 7350 V,membrane,7350 V lies 54 V above Vc where the stress is near zero
+Lowest frequency 0 V,41.858 Hz,41.858 Hz,<0.01%,membrane,undamped (modulus of complex eigenfrequency)
+Lowest frequency 2 kV,40.254 Hz,40.254 Hz,<0.01%,membrane,undamped
+Frequency law f0*sqrt(1-(V/Vc)^2) 0-7 kV (8 voltages),11.79 Hz at 7 kV,closed form,<=0.015%,membrane,lowest mode only
+Linear response to p0=0.1 Pa 5850-8750 V,-0.2885 mm at 7350 V,w0/(1-(V/Vc)^2),<=0.06% except 7350 V (-0.79%),membrane,difference at 7350 V is a 0.006% shift in effective Vc magnified by the singularity
+Critical voltage (from deflection divergence),7295.1-7295.5 V,7295.6 V,<=0.006%,membrane,inferred from 7100/7350/7500 V points
+First-mode growth rate V0/Vc=1.20,174.5 1/s,174.5 1/s,0.00%,shell,membrane theory c*j01/Rs with c=6.530 m/s
