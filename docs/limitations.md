@@ -57,3 +57,7 @@ FE estimates for the shell, from the spectrum at $V_0/V_c=1.20$ (22 unstable pai
 2. Calibration of $K_3$ and the other ROM parameters against FE, with the target matrix filled with computed values.
 3. A dynamic test in a model where the short-wave band is suppressed, compared with `rom/rom_release_prediction.py`.
 4. Aerodynamic loading as a prescribed projected pressure (not real CFD) after the structural part is settled.
+
+
+## Update (Nov 2026)
+See `spectral_limits/` and `planar_dynamics/`. The effective bending rigidity was *measured* from the 2D axisymmetric spectra (D_eff = 6.73e-7 N m), superseding the 0.98e-6 inference in earlier text; V_c = 7295.49 V (V_m in the model files); eps_r = 4.7 follows Keplinger et al. (2012). J_m = 50 is an assumed value without a source.
