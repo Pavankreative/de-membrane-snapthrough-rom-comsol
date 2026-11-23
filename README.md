@@ -2,7 +2,7 @@
 
 A pre-stretched dielectric-elastomer (DE) membrane under voltage loses its in-plane tension to the Maxwell stress and becomes unstable. This project builds an analytical reduced-order model (ROM) of the resulting snap-through, checks it against axisymmetric finite-element (FE) models in COMSOL Multiphysics 6.4, and records plainly where the reduced model holds and where it does not.
 
-> **Status: research in progress, one author, not peer reviewed.** A manuscript on the spectral limits of the single-mode description (submitted to a Royal Society journal; this repository is its data and code supplement) is in preparation. FE runs use material constants from the published range for VHB 4910, not a fit to one film. No experiments were done. Every claim below carries its evidence level; see [Limitations](docs/limitations.md) before relying on a number.
+> **Status: research in progress, one author, not peer reviewed.** This repository supplies the data and code for revision 17 of the manuscript on the spectral limits of a single-mode membrane description. FE runs use material constants from the published range for VHB 4910, not a fit to one film. No experiments were done. Every claim below carries its evidence level; see [Limitations](docs/limitations.md) before relying on a number.
 
 ![Branch trace](figures/branch_trace.gif)
 
@@ -27,8 +27,8 @@ Two supplements were added for the manuscript on the spectral limits of the sing
 
 | Folder | Content | Result |
 |---|---|---|
-| [`spectral_limits/`](spectral_limits/) | Flat-state spectrum of the 2D axisymmetric shell (pinned and clamped rim), exact prestressed-plate dispersion, Table 7 crossings, exclusion criterion | Effective rigidity measured: $D_\text{eff}=6.73\times10^{-7}$ N m (pinned 6.738e-7, clamped 6.719e-7). Stable-side extrapolation puts the first two radial crossings at $x_c=2.20\times10^{-5}$ and $1.66\times10^{-4}$ (pinned), $9.17\times10^{-5}$ and $2.74\times10^{-4}$ (clamped), with $x=(V_0/V_m)^2-1$. |
-| [`planar_dynamics/`](planar_dynamics/) | C-accelerated RK4 and Lyapunov code, basin and Poincare scripts, stored results for Tables 3-5 and Figs 5-7 | Reference first-order threshold $A_c=0.2044$; recomputed Lyapunov exponents match the stored ones exactly. |
+| [`spectral_limits/`](spectral_limits/) | Flat-state spectrum of the 2D axisymmetric shell (pinned and clamped rim), exact prestressed-plate dispersion, Table 7 crossings, exclusion criterion | Effective rigidity fitted: $D_\text{eff}=6.73\times10^{-7}$ N m (pinned 6.738e-7, clamped 6.719e-7). Stable-side extrapolation puts the first two radial crossings at $x_c=2.20\times10^{-5}$ and $1.66\times10^{-4}$ (pinned), $9.17\times10^{-5}$ and $2.74\times10^{-4}$ (clamped), with $x=(V_0/V_m)^2-1$. |
+| [`planar_dynamics/`](planar_dynamics/) | Manifold collocation, 20-period first crossing, Lyapunov and single-trajectory runs; Tables 3–5 and Figures 5–8 | Direct onsets 0.204608 and 0.333946. At A=0.39 the coupled median exponent is +0.2002. Table 5 coupled counts are 2, 15 and 91 at A=0.4, 0.5 and 1.0. |
 
 **Exclusion criterion.** With $\Delta=(V_0/V_c)^2-1$ the forcing coefficients obey $g_3/g_1\le\Delta/(1+\Delta)$. The reference ratio $0.16$ needs $\Delta\ge0.19$, about 1,250 to 2,400 times the first competing $(1,1)$ crossing, so single-mode validity fails at those coefficients (`spectral_limits/exclusion_criterion.py`).
 
@@ -129,13 +129,13 @@ Without bending stiffness, mode $n$ grows at $s_n=c\,j_{0,n}/R_s$, so growth ris
 
 | Item | Result |
 |---|---|
-| Melnikov loop thresholds | $A_c^R=0.204$, $A_c^L=0.334$ (manifolds reproduce both to 0.1%) |
+| Melnikov loop thresholds | $A_c^R=0.204$, $A_c^L=0.334$ (32-phase direct onsets differ by +0.108% and +0.116%) |
 | Planar crossing threshold | $\approx4.5\,A_c^L$ |
-| Coupled (azimuthal pass) crossing threshold | $\approx1.17\,A_c^L$ (seed dependent, 1.08-1.39) |
-| Escaped fraction, coupled, $A=0.10$ to $0.50$ | 4.9% to 58.3% |
+| Coupled (azimuthal pass) crossing threshold | $\approx1.18\,A_c^L$ (seed dependent, 1.13–1.32) |
+| Escaped fraction, coupled, $A=0.10$ to $0.50$ | 4.9% to 58.4% |
 | Largest Lyapunov exponent | negative (planar), about $+0.2$ (coupled, $A=0.39$, $0.50$) |
 
-The Melnikov criterion marks the onset of homoclinic tangling. It is **not** a deterministic escape boundary: crossing needs more forcing. Details and caveats are in [`docs/numerical_methods.md`](docs/numerical_methods.md). The integrator, basin and Lyapunov scripts are in [`planar_dynamics/`](planar_dynamics/); the direct manifold-onset script is not yet included.
+The Melnikov criterion marks the onset of homoclinic tangling. It is **not** a deterministic escape boundary: crossing needs more forcing. Details and caveats are in [`docs/numerical_methods.md`](docs/numerical_methods.md). The [revision 17 dynamics supplement](planar_dynamics/README.md) lists the executed scripts, input protocols, archived outputs and exact verification values.
 
 ## 5. What is and is not shown
 
@@ -193,7 +193,7 @@ planar_dynamics/         planar and coupled dynamics: Lyapunov, basins, Poincare
 pip install -r requirements.txt
 # supplements (run inside each folder; see their READMEs)
 (cd spectral_limits && python3 fit_deff.py && python3 table7.py && python3 exclusion_criterion.py)
-(cd planar_dynamics && python3 verify_lyap.py)   # compiles rk.c with gcc on first use
+(cd planar_dynamics && python3 -m pip install -r requirements-rev17.txt && python3 run_rev17.py)
 # earlier membrane study
 python rom/closed_form_coefficients.py 9000    # V0 in volts; prints Vc, K1, K3, a, b
 python rom/fit_cubic.py                        # fit to data/membrane_frozen_mean_control.csv
@@ -211,8 +211,7 @@ python rom/make_schematic_and_animation.py
 3. **Calibration** of $K_3$ and the other ROM parameters against FE.
 4. **Dynamic test** in a model where the short-wave band is suppressed, compared with the ROM release prediction.
 5. **Aerodynamic loading** as a prescribed projected pressure (not real CFD).
-6. **Direct manifold-onset script** (Table 3, "direct onset" column) and the trajectory counts of Table 5 added to `planar_dynamics/`.
-7. **References** with checked bibliographic details in `docs/theory.md` section 7.
+6. **References** with checked bibliographic details in `docs/theory.md` section 7.
 
 ## 10. Tools, author, licence
 

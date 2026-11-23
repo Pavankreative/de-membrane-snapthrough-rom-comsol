@@ -14,4 +14,4 @@ Reproduced closed-form values: pre-stress 93004.9 Pa, critical voltage 7295.57 V
 
 The public COMSOL check table reports 41.858 Hz at zero voltage.
 
-The Gent/Maxwell derivation and Melnikov criterion remain documented in the theory notes. The manifold/basin scripts underlying the reported Melnikov numerical checks are not public here. Axisymmetric FE cannot verify the azimuthal mode; nonlinear cubic disagreement, absent zero-pressure wells and the failed FE time-domain comparison remain open limitations. No manuscript acceptance or peer-review claim is made.
+The Gent/Maxwell derivation and Melnikov criterion remain documented in the theory notes. The subsequent revision 17 [dynamics supplement](../planar_dynamics/README.md) provides the manifold, basin, Lyapunov and trajectory drivers, their archived outputs and checksum verification. Axisymmetric FE cannot verify the azimuthal mode; nonlinear cubic disagreement, absent zero-pressure wells and the failed FE time-domain comparison remain open limitations. No manuscript acceptance or peer-review claim is made.

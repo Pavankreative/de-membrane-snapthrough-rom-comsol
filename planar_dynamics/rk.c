@@ -2,11 +2,14 @@
 static double T0=0.0;
 void set_t0(double v){T0=v;}
 static double D=0.08,D2=0.03,F0=0.12,G1=0.50,G3=0.08,S2=1.593*1.593,W=1.72,GAM=3.0,KK=8.0;
-static void rhs(double t,const double*z,double A,int pl,double*o){
+static void driven_rhs(double drive,const double*z,int pl,double*o){
   double x=z[0],xd=z[1],r=z[2],rd=z[3];
-  double F=A*(F0+(G1-G3*x*x)*x)*cos(W*t);
+  double F=drive*(F0+(G1-G3*x*x)*x);
   o[0]=xd; o[1]=x-x*x*x-D*xd-D2*xd*fabs(xd)+F-GAM*x*r*r;
   if(pl){o[2]=0;o[3]=0;} else {o[2]=rd; o[3]=S2*r-KK*r*r*r-GAM*x*x*r-D*rd-D2*rd*fabs(rd);}
+}
+static void rhs(double t,const double*z,double A,int pl,double*o){
+  driven_rhs(A*cos(W*t),z,pl,o);
 }
 static void step(double t,double*z,double h,double A,int pl){
   double k1[4],k2[4],k3[4],k4[4],y[4];int i;
@@ -60,4 +63,34 @@ double nlyap(double*z0,double A,int ntrans,int nper,int steps){
     double nrm=sqrt(u*u+ud*ud); sum+=log(nrm/1e-6); u*=1e-6/nrm; ud*=1e-6/nrm;
   }
   return sum/(nper*T);
+}
+
+/* First hitting of x >= 0 at an accepted RK4 step. Each start begins in x < 0.
+   Precompute the time-periodic drive once per phase, shared by all starts. */
+#include <stdint.h>
+#include <stdlib.h>
+void first_cross(const double *x, const double *v, int count, double A,
+                 int planar, int steps, uint8_t *hit) {
+    const double h = 2*M_PI/(W*steps);
+    double drive[2*steps+1];
+    for (int k=0; k<=2*steps; k++)
+        drive[k] = A*cos(M_PI*k/steps);
+    #pragma omp parallel for schedule(dynamic,32)
+    for (int i=0; i<count; i++) {
+        double z[4]={x[i],v[i],planar ? 0.0 : 1e-4,0.0};
+        hit[i]=0;
+        for (int t=0; t<20*steps && !hit[i]; t++) {
+            int k=2*(t%steps);
+            double a[4],b[4],c[4],d[4],y[4];
+            driven_rhs(drive[k],z,planar,a);
+            for (int j=0;j<4;j++) y[j]=z[j]+h*a[j]/2;
+            driven_rhs(drive[k+1],y,planar,b);
+            for (int j=0;j<4;j++) y[j]=z[j]+h*b[j]/2;
+            driven_rhs(drive[k+1],y,planar,c);
+            for (int j=0;j<4;j++) y[j]=z[j]+h*c[j];
+            driven_rhs(drive[k+2],y,planar,d);
+            for (int j=0;j<4;j++) z[j]+=h*(a[j]+2*b[j]+2*c[j]+d[j])/6;
+            hit[i]=(z[0]>=0);
+        }
+    }
 }
