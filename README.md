@@ -2,7 +2,7 @@
 
 A pre-stretched dielectric-elastomer (DE) membrane under voltage loses its in-plane tension to the Maxwell stress and becomes unstable. This project builds an analytical reduced-order model (ROM) of the resulting snap-through, checks it against axisymmetric finite-element (FE) models in COMSOL Multiphysics 6.4, and records plainly where the reduced model holds and where it does not.
 
-> **Status: research in progress, one author, not peer reviewed.** A manuscript is in preparation. FE runs use material constants from the published range for VHB 4910, not a fit to one film. No experiments were done. Every claim below carries its evidence level; see [Limitations](docs/limitations.md) before relying on a number.
+> **Status: research in progress, one author, not peer reviewed.** A manuscript on the spectral limits of the single-mode description (submitted to a Royal Society journal; this repository is its data and code supplement) is in preparation. FE runs use material constants from the published range for VHB 4910, not a fit to one film. No experiments were done. Every claim below carries its evidence level; see [Limitations](docs/limitations.md) before relying on a number.
 
 ![Branch trace](figures/branch_trace.gif)
 
@@ -21,6 +21,19 @@ A pre-stretched dielectric-elastomer (DE) membrane under voltage loses its in-pl
 9. [Roadmap](#9-roadmap)
 10. [Tools, author, licence](#10-tools-author-licence)
 
+## What is new (November 2026)
+
+Two supplements were added for the manuscript on the spectral limits of the single-mode description. Each folder has its own README with check values.
+
+| Folder | Content | Result |
+|---|---|---|
+| [`spectral_limits/`](spectral_limits/) | Flat-state spectrum of the 2D axisymmetric shell (pinned and clamped rim), exact prestressed-plate dispersion, Table 7 crossings, exclusion criterion | Effective rigidity measured: $D_\text{eff}=6.73\times10^{-7}$ N m (pinned 6.738e-7, clamped 6.719e-7). Stable-side extrapolation puts the first two radial crossings at $x_c=2.20\times10^{-5}$ and $1.66\times10^{-4}$ (pinned), $9.17\times10^{-5}$ and $2.74\times10^{-4}$ (clamped), with $x=(V_0/V_m)^2-1$. |
+| [`planar_dynamics/`](planar_dynamics/) | C-accelerated RK4 and Lyapunov code, basin and Poincare scripts, stored results for Tables 3-5 and Figs 5-7 | Reference first-order threshold $A_c=0.2044$; recomputed Lyapunov exponents match the stored ones exactly. |
+
+**Exclusion criterion.** With $\Delta=(V_0/V_c)^2-1$ the forcing coefficients obey $g_3/g_1\le\Delta/(1+\Delta)$. The reference ratio $0.16$ needs $\Delta\ge0.19$, about 1,250 to 2,400 times the first competing $(1,1)$ crossing, so single-mode validity fails at those coefficients (`spectral_limits/exclusion_criterion.py`).
+
+**Not established.** All COMSOL crossings are extrapolations from the stable side. The $(1,1)$ and $(2,1)$ crossings were not obtained from COMSOL (3D mesh mixes $n=0$ and $n=4$; the azimuthal-extension runs disagree with plate theory). The origin of $D_\text{eff}=0.59$ times the unstretched-plate rigidity is unidentified. The earlier membrane and shell studies below remain as the record of the first stage; their $K_3$ disagreement is unchanged.
+
 ## 1. Motivation and problem
 
 A DE membrane is a thin elastomer film between compliant electrodes. Voltage squeezes it through the thickness and expands it in-plane, which removes pre-stress. Past a critical voltage the net in-plane tension is negative and the flat state is unstable, so the membrane can buckle into a dome and, if it is driven (for example by an aerodynamic load plus a voltage modulation), jump between the two dome states. That jump is the snap-through of interest.
@@ -38,7 +51,7 @@ The question is how much of that behaviour a few-degree-of-freedom model can cap
 | Reference radius, thickness | $R=50$ mm, $H_0=0.5$ mm |
 | Equibiaxial pre-stretch | $\lambda_p=1.8$, so $R_s=90$ mm, $h=0.15432$ mm |
 | Gent shear modulus, locking parameter | $\mu=27.46$ kPa, $J_m=50$ |
-| Density, relative permittivity | $\rho=960$ kg/m³, $\varepsilon_r=4.7$ (source not yet verified) |
+| Density, relative permittivity | $\rho=960$ kg/m³, $\varepsilon_r=4.7$ (Keplinger et al. 2012; Molberg et al. 2009 report 4.65). $J_m=50$ is assumed; no source |
 | Pre-stress, tension | $\sigma_0=93\,005$ Pa, $N=14.353$ N/m |
 | Critical voltage | $V_c=7295.6$ V |
 
@@ -122,7 +135,7 @@ Without bending stiffness, mode $n$ grows at $s_n=c\,j_{0,n}/R_s$, so growth ris
 | Escaped fraction, coupled, $A=0.10$ to $0.50$ | 4.9% to 58.3% |
 | Largest Lyapunov exponent | negative (planar), about $+0.2$ (coupled, $A=0.39$, $0.50$) |
 
-The Melnikov criterion marks the onset of homoclinic tangling. It is **not** a deterministic escape boundary: crossing needs more forcing. Details and caveats are in [`docs/numerical_methods.md`](docs/numerical_methods.md). The ROM integrator, manifold and basin scripts are not yet in this repository.
+The Melnikov criterion marks the onset of homoclinic tangling. It is **not** a deterministic escape boundary: crossing needs more forcing. Details and caveats are in [`docs/numerical_methods.md`](docs/numerical_methods.md). The integrator, basin and Lyapunov scripts are in [`planar_dynamics/`](planar_dynamics/); the direct manifold-onset script is not yet included.
 
 ## 5. What is and is not shown
 
@@ -170,12 +183,18 @@ rom/
   make_schematic_and_animation.py   regenerates fig5, fig6 and branch_trace.gif
 figures/
 models/                  COMSOL files (see models/README.md)
+spectral_limits/         flat-state spectra, plate-dispersion fits, Table 7, exclusion criterion (own README)
+planar_dynamics/         planar and coupled dynamics: Lyapunov, basins, Poincare sections (own README)
 ```
 
 ## 8. Reproduce
 
 ```bash
 pip install -r requirements.txt
+# supplements (run inside each folder; see their READMEs)
+(cd spectral_limits && python3 fit_deff.py && python3 table7.py && python3 exclusion_criterion.py)
+(cd planar_dynamics && python3 verify_lyap.py)   # compiles rk.c with gcc on first use
+# earlier membrane study
 python rom/closed_form_coefficients.py 9000    # V0 in volts; prints Vc, K1, K3, a, b
 python rom/fit_cubic.py                        # fit to data/membrane_frozen_mean_control.csv
 python rom/rom_release_prediction.py
@@ -187,12 +206,12 @@ python rom/make_schematic_and_animation.py
 
 ## 9. Roadmap
 
-1. **3D or harmonic-expansion membrane model** to test the azimuthal pass and look for non-axisymmetric buckled states.
+1. **Structured 3D or validated Fourier-sector model** to obtain the $(1,1)$ and $(2,1)$ crossings and test the azimuthal pass.
 2. **Real COMSOL visuals** to replace the schematic dome: deformed shapes at the fold and at 11.7 mm, mode-shape animations, azimuthal buckled shapes, each labelled with its model and case.
 3. **Calibration** of $K_3$ and the other ROM parameters against FE.
 4. **Dynamic test** in a model where the short-wave band is suppressed, compared with the ROM release prediction.
 5. **Aerodynamic loading** as a prescribed projected pressure (not real CFD).
-6. **ROM scripts** (integrators, manifolds, basin maps, Lyapunov) added to `rom/`.
+6. **Direct manifold-onset script** (Table 3, "direct onset" column) and the trajectory counts of Table 5 added to `planar_dynamics/`.
 7. **References** with checked bibliographic details in `docs/theory.md` section 7.
 
 ## 10. Tools, author, licence
