@@ -125,4 +125,4 @@ $$s_n=c\,k_n,\quad k_n=\frac{j_{0,n}}{R_s},\quad c=\sqrt{\frac{|N_\text{eff}|}{\
 
 ## 7. References
 
-Primary sources still to be added with checked bibliographic details (Gent 1996 for the strain-energy function, Guckenheimer and Holmes for Melnikov theory, and the VHB 4910 data sources for $\mu$, $J_m$, $\varepsilon_r$). The value $\varepsilon_r=4.7$ is a representative figure from the published range and its source is not verified.
+Primary sources still to be added with checked bibliographic details (Gent 1996 for the strain-energy function, Guckenheimer and Holmes for Melnikov theory, and the VHB 4910 data sources for $\mu$, $J_m$, $\varepsilon_r$). The value $\varepsilon_r=4.7$ follows Keplinger et al. (2012); Molberg et al. (2009) report 4.65. $J_m=50$ is assumed and has no source.

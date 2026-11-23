@@ -1,6 +1,6 @@
 # Numerical methods and results of the reduced-order model
 
-This note records what was computed numerically on the reduced model of `docs/theory.md`, with the numbers as obtained. The scripts that produced the ROM runs (manifold computation, basin maps, Lyapunov estimates) are **not yet in this repository**; they are listed under "To be added" at the end. Everything in `rom/` is reproducible from the data in `data/`.
+This note records what was computed numerically on the reduced model of `docs/theory.md`, with the numbers as obtained. The Lyapunov, basin and Poincare scripts are in `planar_dynamics/`; the direct manifold computation is not yet included (see "To be added"). Everything in `rom/` is reproducible from the data in `data/`.
 
 ## 1. Melnikov quadrature
 
@@ -54,6 +54,5 @@ with the FE slope $a=23.968$ Pa/mm and the FE cubic coefficient $b=0.134$ Pa/mmÂ
 
 ## To be added
 
-* Planar and coupled ROM integrators, manifold computation, Melnikov check
-* Basin-map and Lyapunov scripts
+* Direct stable/unstable manifold computation (Table 3 "direct onset")
 * A fit-and-compare script for the full calibration protocol (target matrix) once FE data exist
