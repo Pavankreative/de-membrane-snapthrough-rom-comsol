@@ -223,5 +223,3 @@ Pavan Kumar Karsinapu, ORCID 0009-0006-8040-5244. Code and text under the MIT li
 ## Reproducibility audit — 21 November 2026
 
 The public model combines Gent elasticity, Maxwell stress and a Melnikov criterion. COMSOL Multiphysics 6.4 axisymmetric results support selected linear checks, not the complete nonlinear/forced response. See [execution and evidence notes](docs/VERIFICATION.md).
-
-**Model revision matters:** the current public parameter set gives 93,005 Pa pre-stress and the archived zero-voltage frequency check is 41.858 Hz. The alternative author-supplied values **97,840 Pa analytical / 97,839 Pa FE** and **42.932 Hz / 41.37 Hz** have no matching model/parameter record in this repository. They are not substituted into the current results or presented as reproduced checks. Their model revision, mode identification and source exports must be supplied before comparison.
