@@ -4,9 +4,32 @@ A pre-stretched dielectric-elastomer (DE) membrane under voltage loses its in-pl
 
 > **Status: research in progress, one author, not peer reviewed.** This repository supplies the data and code for revision 17 of the manuscript on the spectral limits of a single-mode membrane description. FE runs use material constants from the published range for VHB 4910, not a fit to one film. No experiments were done. Every claim below carries its evidence level; see [Limitations](docs/limitations.md) before relying on a number.
 
+## Reproducibility audit — 23 November 2026 (revision 17)
+
+A clean run in the recorded Linux environment regenerated all **21 archived data and figure files** byte-for-byte. A separate check compared the generated results with the revision 17 Word manuscript. Every data cell in Tables 3–5 matched, as did the embedded PNGs for Figures 1, 4, 5, 6, 7 and 8.
+
+| Manuscript result | Verified value | Archived output |
+|---|---|---|
+| Table 3 and Figure 7 · planar manifold onset | Right loop **0.204608**, left loop **0.333946**. Both the 16- and 32-phase grids gave these values. | [Onsets](planar_dynamics/data/table3.csv) · [Phase-resolved splitting](planar_dynamics/data/manifold_splitting_table3.csv) |
+| Figures 5–6 · first crossing in 20 periods | At A = 0.50, **12,844 of 21,988** eligible coupled starts crossed. The T/100 and T/200 classifications agreed for **98.17%** of starts. | [Basin counts](planar_dynamics/data/basin_summary.csv) · [Uncertainty fits](planar_dynamics/data/uncertainty_fits.csv) |
+| Table 4 and Figure 8 · coupled finite-time Lyapunov exponents | Median **+0.2002** at A = 0.39 and **+0.2191** at A = 0.50. All 30 starts had positive exponents at each amplitude. | [Exponents by case](planar_dynamics/data/table4.csv) |
+| Table 5 · 120-period trajectories | At γ = 3 and Kₙₙ = 8, the reference trajectory changed sign **2, 15 and 91** times at A = 0.4, 0.5 and 1.0, respectively. | [Trajectory counts](planar_dynamics/data/table5.csv) |
+| Table 7 · flat-state spectrum | Stable-side axisymmetric COMSOL spectra gave fitted bending rigidities of **6.74 × 10⁻⁷ N·m** pinned and **6.72 × 10⁻⁷ N·m** clamped. The azimuthal crossings are plate-model predictions. | [Crossings](spectral_limits/table7_crossings.csv) · [COMSOL exports and fitting method](spectral_limits/README.md) |
+
+To check the archived files and then rerun the dynamics from the repository root:
+
+```sh
+cd planar_dynamics
+python3 -m pip install -r requirements-rev17.txt
+python3 verify_rev17.py
+python3 run_rev17.py
+```
+
+The [dynamics README](planar_dynamics/README.md) lists the compiler and package versions, case definitions and optional Word-file check. The [execution record](docs/VERIFICATION.md) covers this audit and the earlier static-ROM checks. The [research provenance note](docs/RESEARCH_PROVENANCE.md) describes how the calculations were produced.
+
 ![Branch trace](figures/branch_trace.gif)
 
-*Animation of the centre-deflection-controlled FE run (membrane, frozen thickness, V0/Vc = 1.234). The pressure and mean-deflection curves are the real FE data, traced point by point. The dome in the upper right is a **schematic profile, not an FE field**; it is scaled only so that its mean deflection matches the FE value. Real COMSOL deformed shapes and mode animations are planned (see [Roadmap](#roadmap)).*
+*Animation of the centre-deflection-controlled FE run (membrane, frozen thickness, V0/Vc = 1.234). The pressure and mean-deflection curves are the real FE data, traced point by point. The dome in the upper right is a **schematic profile, not an FE field**; it is scaled only so that its mean deflection matches the FE value. Real COMSOL deformed shapes and mode animations are planned (see [Roadmap](#9-roadmap)).*
 
 ## Contents
 
@@ -218,7 +241,3 @@ python rom/make_schematic_and_animation.py
 COMSOL Multiphysics 6.4 (Membrane, Shell and Global ODE interfaces; eigenfrequency, stationary and time-dependent studies); Python with NumPy, SciPy and Matplotlib.
 
 Pavan Kumar Karsinapu, ORCID 0009-0006-8040-5244. Code and text under the MIT licence (`LICENSE`).
-
-## Reproducibility audit — 21 November 2026
-
-The public model combines Gent elasticity, Maxwell stress and a Melnikov criterion. COMSOL Multiphysics 6.4 axisymmetric results support selected linear checks, not the complete nonlinear/forced response. See [execution and evidence notes](docs/VERIFICATION.md).

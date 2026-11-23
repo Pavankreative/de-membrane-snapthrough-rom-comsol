@@ -1,6 +1,12 @@
-# Execution and evidence record — 21 November 2026
+# Execution and evidence record
 
-Python 3.12 on Linux. All five public scripts completed with exit code 0 in an isolated copy of the repository, using `MPLBACKEND=Agg` for figures:
+## Revision 17 dynamics · 23 November 2026
+
+A clean run regenerated 21 archived files in the recorded environment. All SHA-256 values matched the [reference manifest](../planar_dynamics/SHA256SUMS). The manuscript check compared every data cell in Tables 3–5 and the embedded images for Figures 1, 4, 5, 6, 7 and 8. The [root audit](../README.md#reproducibility-audit--23-november-2026-revision-17) reports the numerical checks, and the [dynamics README](../planar_dynamics/README.md) gives commands for repeating them. The Table 7 fits use archived COMSOL exports.
+
+## Earlier static-ROM checks · 21 November 2026
+
+Python 3.12 on Linux. The five static-ROM scripts listed below completed with exit code 0 in an isolated copy of the repository, using `MPLBACKEND=Agg` for figures:
 
 - `python rom/closed_form_coefficients.py 9000`
 - `python rom/fit_cubic.py`
